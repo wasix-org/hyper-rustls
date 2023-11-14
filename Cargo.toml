@@ -31,7 +31,8 @@ hyper = { version = "0.14", git = "https://github.com/wasix-org/hyper.git", bran
 rustls = { version = "0.21.5", git = "https://github.com/wasix-org/rustls.git", branch = "v0.21.5", default-features = false, features = [
     "tls12",
 ] }
-webpki-roots = { version = "0.25", optional = true }
+# webpki-roots = { version = "0.25", optional = true }
+webpki-roots = { git = "https://github.com/wasix-org/webpki-roots.git", branch = "v0.24.0", version = "0.24", optional = true }
 rustls-pemfile = "1.0.0"
 tokio = { version = "=1.24.2", git = "https://github.com/wasix-org/tokio.git", branch = "epoll", features = [
     "io-std",
