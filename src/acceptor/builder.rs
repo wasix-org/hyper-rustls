@@ -1,9 +1,11 @@
 use std::sync::Arc;
 
 use hyper::server::conn::AddrIncoming;
+use pki_types::{CertificateDer, PrivateKeyDer};
 use rustls::ServerConfig;
 
 use super::TlsAcceptor;
+
 /// Builder for [`TlsAcceptor`]
 pub struct AcceptorBuilder<State>(State);
 
@@ -21,18 +23,17 @@ impl AcceptorBuilder<WantsTlsConfig> {
         AcceptorBuilder(WantsAlpn(config))
     }
 
-    /// Use rustls [defaults][with_safe_defaults] without [client authentication][with_no_client_auth]
+    /// Use rustls default crypto provider and safe defaults without
+    /// [client authentication][with_no_client_auth]
     ///
-    /// [with_safe_defaults]: rustls::ConfigBuilder::with_safe_defaults
     /// [with_no_client_auth]: rustls::ConfigBuilder::with_no_client_auth
     pub fn with_single_cert(
         self,
-        cert_chain: Vec<rustls::Certificate>,
-        key_der: rustls::PrivateKey,
+        cert_chain: Vec<CertificateDer<'static>>,
+        key_der: PrivateKeyDer<'static>,
     ) -> Result<AcceptorBuilder<WantsAlpn>, rustls::Error> {
         Ok(AcceptorBuilder(WantsAlpn(
             ServerConfig::builder()
-                .with_safe_defaults()
                 .with_no_client_auth()
                 .with_single_cert(cert_chain, key_der)?,
         )))
