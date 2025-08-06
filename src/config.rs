@@ -31,7 +31,7 @@ impl ConfigBuilderExt for ConfigBuilder<ClientConfig, WantsVerifier> {
 
         for cert in rustls_native_certs::load_native_certs().expect("could not load platform certs")
         {
-            match roots.add(pki_types::CertificateDer::from(cert.0)) {
+            match roots.add(pki_types::CertificateDer::from(cert.to_vec())) {
                 Ok(_) => valid_count += 1,
                 Err(err) => {
                     crate::log::debug!("certificate parsing failed: {:?}", err);
