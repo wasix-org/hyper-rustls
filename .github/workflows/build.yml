@@ -22,7 +22,7 @@ jobs:
           - stable
           - beta
           - nightly
-        os: [ubuntu-20.04]
+        os: [ubuntu-latest]
         # but only stable on macos/windows (slower platforms)
         include:
           - os: macos-latest
@@ -39,6 +39,14 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
+
+      - name: Install NASM for aws-lc-rs on Windows
+        if: runner.os == 'Windows'
+        uses: ilammy/setup-nasm@v1
+
+      - name: Install ninja-build tool for aws-lc-fips-sys on Windows
+        if: runner.os == 'Windows'
+        uses: seanmiddleditch/gha-setup-ninja@v6
 
       - name: cargo check (default features)
         run: cargo check --all-targets
@@ -58,8 +66,20 @@ jobs:
         env:
           RUST_BACKTRACE: 1
 
+      - name: cargo test (debug; defaults+ring)
+        run: cargo test --no-default-features --features ring,native-tokio,http1,tls12,logging
+        env:
+          RUST_BACKTRACE: 1
+
       - name: cargo test (debug; all features)
+        if: runner.os == 'Linux'
         run: cargo test --all-features
+        env:
+          RUST_BACKTRACE: 1
+
+      - name: cargo test (debug; all features, excluding FIPS)
+        if: runner.os != 'Linux'
+        run: cargo test --features aws-lc-rs,http1,http2,webpki-tokio,native-tokio,ring,tls12,logging
         env:
           RUST_BACKTRACE: 1
 
@@ -73,7 +93,7 @@ jobs:
         run: cargo test --release --no-run
 
   msrv:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -83,7 +103,7 @@ jobs:
       - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.63"
+          toolchain: "1.71"
 
       - name: Check MSRV
         run: cargo check --lib --all-features
@@ -102,7 +122,7 @@ jobs:
 
   docs:
     name: Check for documentation errors
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -113,7 +133,8 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
 
       - name: cargo doc (all features)
-        run: cargo doc --all-features --no-deps
+        # keep features in sync with Cargo.toml `[package.metadata.docs.rs]` section
+        run: cargo doc --no-default-features --features http1,http2,webpki-tokio,native-tokio,ring,tls12,logging --no-deps
         env:
           RUSTDOCFLAGS: -Dwarnings
 
