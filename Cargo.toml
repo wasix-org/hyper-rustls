@@ -1,6 +1,6 @@
 [package]
 name = "hyper-rustls"
-version = "0.27.7"
+version = "0.27.7+wasix.1"
 edition = "2021"
 rust-version = "1.71"
 license = "Apache-2.0 OR ISC OR MIT"
@@ -24,31 +24,25 @@ webpki-tokio = ["webpki-roots"]
 
 [dependencies]
 http = "1"
-hyper = { version = "1", git = "https://github.com/wasix-org/hyper.git", branch = "wasix-1.6.0", default-features = false }
-hyper-util = { version = "0.1", git = "https://github.com/wasix-org/hyper-util", branch = "wasix-0.1.16", default-features = false, features = ["client-legacy", "tokio"] }
+hyper = { version = "1.6.0", default-features = false }
+hyper-util = { version = "0.1.16", default-features = false, features = ["client-legacy", "tokio"] }
 log = { version = "0.4.4", optional = true }
 pki-types = { package = "rustls-pki-types", version = "1" }
-rustls-native-certs = { version = "0.8", git = "https://github.com/wasix-org/rustls-native-certs.git", branch = "wasix-0.8.1", optional = true }
+rustls-native-certs = { version = "0.8", optional = true }
 rustls-platform-verifier = { version = "0.6", optional = true }
-rustls = { git = "https://github.com/wasix-org/rustls.git", branch = "wasix-0.23.31", default-features = false, features = ["tls12"]}
-tokio = { version = "=1.47.0", git = "https://github.com/wasix-org/tokio.git", branch = "wasix-1.47.0" }
-tokio-rustls = { git = "https://github.com/wasix-org/tokio-rustls.git", branch = "wasix-0.26.2", default-features = false }
+rustls = { version = "0.23.31", default-features = false, features = ["tls12"] }
+tokio = "1.47.0"
+tokio-rustls = { version = "0.26.2", default-features = false }
 tower-service = "0.3"
-webpki-roots = { git = "https://github.com/wasix-org/webpki-roots.git", branch = "wasix-1.0.2", optional = true }
+webpki-roots = { version = "1.0.2", optional = true }
 
 [dev-dependencies]
 cfg-if = "1"
 http-body-util = "0.1"
-hyper-util = { version = "0.1", git = "https://github.com/wasix-org/hyper-util", branch = "wasix-0.1.16", default-features = false, features = ["server-auto"] }
-rustls = { git = "https://github.com/wasix-org/rustls.git", branch = "wasix-0.23.31", default-features = false, features = ["tls12"] }
+hyper-util = { version = "0.1.16", default-features = false, features = ["server-auto"] }
+rustls = { version = "0.23.31", default-features = false, features = ["tls12"] }
 rustls-pemfile = "2"
-tokio = { version = "=1.47.0", git = "https://github.com/wasix-org/tokio.git", branch = "wasix-1.47.0", features = [
-    "io-std",
-    "fs",
-    "macros",
-    "net",
-    "rt-multi-thread",
-] }
+tokio = { version = "1.47.0", features = [     "io-std",     "fs",     "macros",     "net",     "rt-multi-thread", ] }
 
 [[example]]
 name = "client"
@@ -74,7 +68,3 @@ features = [
 ]
 rustdoc-args = ["--cfg", "docsrs"]
 
-[patch.crates-io]
-tokio = { git = "https://github.com/wasix-org/tokio.git", branch = "wasix-1.47.0" }
-hyper = { git = "https://github.com/wasix-org/hyper.git", branch = "wasix-1.6.0" }
-socket2 = { git = "https://github.com/wasix-org/socket2.git", branch = "wasix-0.6.0" }
